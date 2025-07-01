@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>妤生日祝福</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+    }
+
+    #container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    #closedEnvelope, #openEnvelope, video {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    #openEnvelope, video, #replayBtn {
+      display: none;
+    }
+
+    video {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #replayBtn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 18px 32px;
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #111;
+      border: none;
+      border-radius: 16px;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      transition: opacity 0.5s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #replayBtn.show {
+      display: block;
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="container">
+    <img id="closedEnvelope" src="close.png" alt="信封未開">
+    <img id="openEnvelope" src="open.png" alt="信封已開">
+    <video id="birthdayVideo" src="妤生日影片.mp4" controls playsinline></video>
+    <button id="replayBtn">🔁 再看一次</button>
+  </div>
+
+  <script>
+    const closedEnvelope = document.getElementById('closedEnvelope');
+    const openEnvelope = document.getElementById('openEnvelope');
+    const video = document.getElementById('birthdayVideo');
+    const replayBtn = document.getElementById('replayBtn');
+
+    function resetToStart() {
+      video.pause();
+      video.currentTime = 0;
+      video.style.display = 'none';
+      replayBtn.classList.remove('show');
+      closedEnvelope.style.display = 'block';
+    }
+
+    closedEnvelope.addEventListener('click', async () => {
+      closedEnvelope.style.display = 'none';
+      openEnvelope.style.display = 'block';
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      openEnvelope.style.display = 'none';
+      video.style.display = 'block';
+
+      // 嘗試進入全螢幕
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      } else if (video.webkitRequestFullscreen) {
+        video.webkitRequestFullscreen();
+      } else if (video.msRequestFullscreen) {
+        video.msRequestFullscreen();
+      }
+
+      video.play();
+    });
+
+    // 影片播放完畢時，顯示「再看一次」按鈕
+    video.addEventListener('ended', () => {
+      replayBtn.classList.add('show');
+    });
+
+    replayBtn.addEventListener('click', () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      }
+      resetToStart();
+    });
+  </script>
+
+</body>
+</html>
